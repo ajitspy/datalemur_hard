@@ -173,4 +173,67 @@ SELECT
   item_type,  
   non_prime_item_count AS item_count  
 FROM non_prime_items;
-/*  */
+/* Amazon is trying to identify their high-end customers. To do so, they first need your help to write a query that obtains the most expensive purchase made by each customer. Order the results by the most expensive purchase first.
+
+transactions Table:
+Column Name	Type
+transaction_id	integer
+customer_id	integer
+purchase_amount	integer
+transactions Example Input:
+transaction_id	customer_id	purchase_amount
+1	1	150
+2	1	35.90
+3	2	349.99
+4	2	199.95
+5	2	551.20
+6	3	13.30
+Example Output:
+customer_id	purchase_amount
+2	551.20
+1	150
+3	13.30
+Explanation:
+User 1 have 2 purchases (150 and 35.90) with 150 being the most expensive purchase whereas user 2 have 3 purchases (349.99, 199.95, and 551.20) and 551.20 is their most expensive purchase.
+
+User 3 only have 1 purchase at 13.30 and hence it's their most expensive purchase. The output is then sorted by the most expensive purchase to the least expensive.
+
+The dataset you are querying against may have different input & output - this is just an example! */
+/*select distinct customer_id,
+       max(purchase_amount) over(partition by customer_id) as max_
+from transactions
+order by max_ desc
+*/
+select customer_id , 
+      max(purchase_amount) as mx_
+from transactions
+group by customer_id
+order by mx_ desc
+/*Assume you are given the table below for the purchasing activity by order date and product type. Write a query to calculate the cumulative purchases for each product type over time in chronological order.
+
+Output the order date, product, and the cumulative number of quantities purchased.
+
+total_trans Table:
+Column Name	Type
+order_id	integer
+product_type	string
+quantity	integer
+order_date	datetime
+total_trans Example Input:
+order_id	product_type	quantity	order_date
+213824	printer	20	06/27/2022 12:00:00
+132842	printer	18	06/28/2022 12:00:00
+Example Output:
+order_date	product_type	cum_purchased
+06/27/2022 12:00:00	printer	20
+06/28/2022 12:00:00	printer	38
+Explanation
+On 06/27/2022, 20 printers were purchased. Subsequently, on 06/28/2022, 38 printers were purchased cumulatively (20 + 18 printers).
+
+The dataset you are querying against may have different input & output - this is just an example! */
+select order_date,
+        product_type,
+        sum(quantity) over( partition by product_type order by order_date )
+from total_trans 
+order by order_date
+
